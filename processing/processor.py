@@ -1,12 +1,14 @@
+import cv2
 import numpy as np
 from configs.config import PointillismConfig
 from .preprocessor import PreProcessor
 
 
 class Processor:
-    def __init__(self):
+    def __init__(self, config: PointillismConfig = None):
+        self.config = config or PointillismConfig()
         # init all sub classes and processors
-        self.preprocessor = PreProcessor()
+        self.preprocessor = PreProcessor(self.config)
 
     def apply_pointillism(self, image: np.ndarray) -> np.ndarray:
         """Applies the pointillism effect to the input image.
@@ -23,11 +25,32 @@ class Processor:
             ValueError: If the input image is not a valid NumPy array
                         in the expected format.
         """
-        print("apply_pointillism")
+        if self.config.debug_mode:
+            print("Starting pointillism effect application")
+
         self._validate_image_input(image)
-        self.preprocessor.preprocess_image(image)
+        preprocessed_image = self.preprocessor.preprocess_image(image)
+
+        if self.config.debug_mode:
+            cv2.imwrite(
+                "images/output/preprocessed_image.jpg",
+                np.transpose(preprocessed_image, (1, 0, 2)),
+            )
+            print("Saved preprocessed image for debugging")
 
     def _validate_image_input(self, image: np.ndarray):
+        """Validates the input image array meets the required specifications.
+
+        Args:
+            image (np.ndarray): The input image to validate.
+
+        Raises:
+            ValueError: If the image:
+                - Is not a NumPy array
+                - Does not have shape (height, width, 3)
+                - Does not have data type np.uint8
+                - Contains pixel values outside the range [0, 255]
+        """
         print("_validate_image_input")
         if not isinstance(image, np.ndarray):
             raise ValueError("Input image must be a NumPy array.")
