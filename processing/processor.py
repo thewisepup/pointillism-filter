@@ -1,5 +1,6 @@
 import numpy as np
 from configs.config import PointillismConfig
+from processing.color_palette import ColorPalette
 from .preprocessor import PreProcessor
 from PIL import Image
 
@@ -7,8 +8,10 @@ from PIL import Image
 class Processor:
     def __init__(self, config: PointillismConfig = None):
         self.config = config or PointillismConfig()
-        # init all sub classes and processors
+        if self.config.debug_mode:
+            print("Initializing PreProcessor with config:", self.config)
         self.preprocessor = PreProcessor(self.config)
+        self.color_palette = ColorPalette(self.config)
 
     def apply_pointillism(self, image: np.ndarray) -> np.ndarray:
         """Applies the pointillism effect to the input image.
@@ -34,6 +37,10 @@ class Processor:
         if self.config.debug_mode:
             debug_image = Image.fromarray(preprocessed_image, "RGB")
             debug_image.save("images/output/preprocessed_image.jpg")
+
+        color_palette = self.color_palette.compute_pointillism_color_palette(
+            preprocessed_image
+        )
 
     def _validate_image_input(self, image: np.ndarray):
         """Validates the input image array meets the required specifications.

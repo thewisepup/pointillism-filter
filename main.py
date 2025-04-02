@@ -1,11 +1,6 @@
-import cv2
 from configs import PointillismConfig
-from models import DotCluster
-from processing import PreProcessor, ImageGenerator, ColorTransformer, ColorPalette
 from PIL import Image
-
 import numpy as np
-
 from processing.processor import Processor
 
 
@@ -23,7 +18,7 @@ def main():
     forest = "images/forest.jpeg"
     group = "images/group.JPG"
 
-    image = Image.open(group)
+    image = Image.open(beach)
     print("Original pillow size:", image.size)
 
     numpy_array = np.array(image)

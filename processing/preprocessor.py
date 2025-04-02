@@ -7,13 +7,10 @@ from PIL import Image
 class PreProcessor:
 
     def __init__(self, config: PointillismConfig = None):
-        self.config = config or PointigillismConfig()
-        if self.config.debug_mode:
-            print("Initializing PreProcessor with config:", self.config)
+        self.config = config or PointillismConfig()
 
     def preprocess_image(self, image: np.ndarray) -> np.ndarray:
-        """
-        Preprocesses input image by applying Gaussian filtering and downsampling.
+        """Preprocesses input image by applying Gaussian filtering and downsampling.
 
         Args:
             img: Input image as numpy array (height, width, channels)
@@ -21,7 +18,7 @@ class PreProcessor:
             Processed image as numpy array
         """
         if self.config.debug_mode:
-            print("Starting image preprocessing")
+            print("--Starting image preprocessing--")
 
         # create image copy
         preprocessed_image = image.copy()
@@ -29,7 +26,7 @@ class PreProcessor:
         preprocessed_image = self._downsample_image(preprocessed_image)
 
         if self.config.debug_mode:
-            print("Finished image preprocessing")
+            print("--Finished image preprocessing--")
 
         return preprocessed_image
 
