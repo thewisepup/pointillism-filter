@@ -1,2 +1,4 @@
 class PreProcessor:
-    pass
+
+    def __init__(self):
+        print("init preprocessor")

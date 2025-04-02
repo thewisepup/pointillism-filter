@@ -1,9 +1,6 @@
 from configs.config import PointillismConfig
 from models.dot_cluster import DotCluster
-from processing.preprocessor import PreProcessor
-from processing.image_generator import ImageGenerator
-from processing.color_transformer import ColorTransformer
-from processing.color_palette import ColorPalette
+from processing import PreProcessor, ImageGenerator, ColorTransformer, ColorPalette
 
 
 def main():
