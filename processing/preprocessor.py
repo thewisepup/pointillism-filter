@@ -15,10 +15,4 @@ class PreProcessor:
         Returns:
             Processed image as numpy array
         """
-        # TODO: add more validation
-        if not isinstance(image, np.ndarray):
-            raise TypeError("Input image must be a numpy array")
-
-        if len(image.shape) != 2:
-            raise ValueError("Input image must be 2-dimensional")
         print("preprocess_image")
