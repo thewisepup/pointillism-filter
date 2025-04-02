@@ -1,5 +1,5 @@
-from configs.config import PointillismConfig
-from models.dot_cluster import DotCluster
+from configs import PointillismConfig
+from models import DotCluster
 from processing import PreProcessor, ImageGenerator, ColorTransformer, ColorPalette
 
 
