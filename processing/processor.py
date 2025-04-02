@@ -1,7 +1,7 @@
-import cv2
 import numpy as np
 from configs.config import PointillismConfig
 from .preprocessor import PreProcessor
+from PIL import Image
 
 
 class Processor:
@@ -32,11 +32,8 @@ class Processor:
         preprocessed_image = self.preprocessor.preprocess_image(image)
 
         if self.config.debug_mode:
-            cv2.imwrite(
-                "images/output/preprocessed_image.jpg",
-                np.transpose(preprocessed_image, (1, 0, 2)),
-            )
-            print("Saved preprocessed image for debugging")
+            debug_image = Image.fromarray(preprocessed_image, "RGB")
+            debug_image.save("images/output/preprocessed_image.jpg")
 
     def _validate_image_input(self, image: np.ndarray):
         """Validates the input image array meets the required specifications.

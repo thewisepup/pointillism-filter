@@ -1,12 +1,13 @@
 import cv2
 import numpy as np
 from configs.config import PointillismConfig
+from PIL import Image
 
 
 class PreProcessor:
 
     def __init__(self, config: PointillismConfig = None):
-        self.config = config or PointillismConfig()
+        self.config = config or PointigillismConfig()
         if self.config.debug_mode:
             print("Initializing PreProcessor with config:", self.config)
 
@@ -24,8 +25,8 @@ class PreProcessor:
 
         # create image copy
         preprocessed_image = image.copy()
-        self._apply_low_pass_filter(preprocessed_image)
-        self._downsample_image(preprocessed_image)
+        preprocessed_image = self._apply_low_pass_filter(preprocessed_image)
+        preprocessed_image = self._downsample_image(preprocessed_image)
 
         if self.config.debug_mode:
             print("Finished image preprocessing")
@@ -33,42 +34,41 @@ class PreProcessor:
         return preprocessed_image
 
     def _apply_low_pass_filter(self, image: np.ndarray):
+        if self.config.kernel_size <= 0 or self.config.kernel_size % 2 == 0:
+            raise ValueError("Kernel size must be a positive odd integer.")
+
         if self.config.debug_mode:
             print(
                 f"Applying low pass filter with kernel size: {self.config.kernel_size}"
             )
 
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        bgr_image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        bgr_blurred_image = cv2.GaussianBlur(
+            bgr_image, (self.config.kernel_size, self.config.kernel_size), 0
+        )
+        rgb_blurred_image = cv2.cvtColor(bgr_blurred_image, cv2.COLOR_BGR2RGB)
 
-        if self.config.kernel_size <= 0 or self.config.kernel_size % 2 == 0:
-            raise ValueError("Kernel size must be a positive odd integer.")
+        if self.config.debug_mode:
+            debug_image = Image.fromarray(rgb_blurred_image, "RGB")
+            debug_image.save("images/output/low_pass_filter.jpg")
+        return rgb_blurred_image
 
-        image = cv2.GaussianBlur(
-            image, (self.config.kernel_size, self.config.kernel_size), 0
+    def _downsample_image(self, image: np.ndarray):
+        if self.config.debug_mode:
+            print(f"Downsampling image with factor: {self.config.cluster_distance}")
+
+        height, width = image.shape[:2]
+        new_width = int(width // self.config.cluster_distance)
+        new_height = int(height // self.config.cluster_distance)
+
+        down_sampled_image = cv2.resize(
+            image, (new_width, new_height), interpolation=cv2.INTER_LINEAR
         )
 
         if self.config.debug_mode:
-            print("Low pass filter applied successfully")
-            cv2.imwrite(
-                "images/output/preprocessed_image.jpg",
-                np.transpose(image, (1, 0, 2)),
+            print(
+                f"Image downsampled from {(width, height)} to {(new_width, new_height)}"
             )
-            print("Low pass filter applied successfully")
-
-    def _downsample_image(self, image: np.ndarray):
-        pass
-        # if self.config.debug_mode:
-        #     print(f"Downsampling image with factor: {self.config.downsample_factor}")
-
-        # height, width = image.shape[:2]
-        # new_width = int(width * self.config.downsample_factor)
-        # new_height = int(height * self.config.downsample_factor)
-
-        # image = cv2.resize(
-        #     image, (new_width, new_height), interpolation=cv2.INTER_LINEAR
-        # )
-
-        # if self.config.debug_mode:
-        #     print(
-        #         f"Image downsampled from {(width, height)} to {(new_width, new_height)}"
-        #     )
+            debug_image = Image.fromarray(down_sampled_image, "RGB")
+            debug_image.save("images/output/downsampled.jpg")
+        return down_sampled_image

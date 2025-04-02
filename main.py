@@ -11,22 +11,29 @@ from processing.processor import Processor
 
 def main():
     # Initialize configuration
-    config = PointillismConfig(debug_mode=True)
+    config = PointillismConfig(debug_mode=True, kernel_size=15)
 
     # Initialize all required classes
     processor = Processor(config)
 
     # Load and convert image to numpy array
-    image = Image.open("images/Brandon.jpg")
+    beach = "images/beach.jpg"
+    brandon = "images/brandon.png"
+    coffee = "images/coffee.jpeg"
+    forest = "images/forest.jpeg"
+    group = "images/group.JPG"
+
+    image = Image.open(group)
+    print("Original pillow size:", image.size)
+
     numpy_array = np.array(image)
-    print("Original shape:", numpy_array.shape)  #
+    print("Original numpy shape:", numpy_array.shape)
 
     # Save the image
-
     if config.debug_mode:
-        print("Original shape:", numpy_array.shape)
-        test_img = Image.fromarray(np.transpose(numpy_array, (1, 0, 2)))
-        test_img.save("images/output/initial.jpg")
+        img = Image.fromarray(numpy_array)
+        print("after pillow size:", img.size)
+        img.save("images/output/initial.jpg")
 
     processor.apply_pointillism(numpy_array)
 
