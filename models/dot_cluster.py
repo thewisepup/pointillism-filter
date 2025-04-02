@@ -1,0 +1,2 @@
+class DotCluster:
+    pass
