@@ -51,7 +51,6 @@ class Processor:
                 - Does not have data type np.uint8
                 - Contains pixel values outside the range [0, 255]
         """
-        print("_validate_image_input")
         if not isinstance(image, np.ndarray):
             raise ValueError("Input image must be a NumPy array.")
         if image.ndim != 3 or image.shape[2] != 3:

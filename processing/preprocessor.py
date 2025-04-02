@@ -49,6 +49,11 @@ class PreProcessor:
 
         if self.config.debug_mode:
             print("Low pass filter applied successfully")
+            cv2.imwrite(
+                "images/output/preprocessed_image.jpg",
+                np.transpose(image, (1, 0, 2)),
+            )
+            print("Low pass filter applied successfully")
 
     def _downsample_image(self, image: np.ndarray):
         pass
