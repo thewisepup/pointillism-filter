@@ -44,5 +44,8 @@ class DotCluster:
         Returns:
             weights: np.ndarray shape(3,)
         """
-        # TODO: implement equation to compute dot counts
-        return [100, 422, 11]
+        # TODO: double check
+        dot_counts = self.color_weights * (
+            (self.alpha * self.intensity) // 100
+        )  # TODO: do sum of weights instead of 100
+        return dot_counts
