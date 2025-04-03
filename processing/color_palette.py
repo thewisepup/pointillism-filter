@@ -1,3 +1,4 @@
+import colorsys
 from typing import List, Tuple
 import cv2
 import numpy as np
@@ -22,9 +23,10 @@ class ColorPalette:
         if self.config.debug_mode:
             print("--Generating Color Palette--")
         primary_colors = self._compute_primary_colors(img)
+        enhanced_hsv_primary_colors = self._enhance_color_palette(primary_colors)
 
     def _compute_primary_colors(self, img: np.ndarray) -> np.ndarray:
-        """Apply k-means clustering to extarct num_colors primary colors
+        """Apply k-means clustering to extract num_colors primary colors
         Args:
             img: Input image as numpy array (height, width, channels)
 
@@ -40,20 +42,29 @@ class ColorPalette:
             flattened_img, 8, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS
         )
         primary_colors = np.uint8(centers)
-        if self.config.debug_mode:
-            print("Primary Colors: ", primary_colors)
         return np.uint8(primary_colors)
 
-    def _enhance_color_palette(self, colors: List[np.ndarray]) -> List[np.ndarray]:
+    def _enhance_color_palette(self, rgb_colors: np.ndarray) -> np.ndarray:
         """
         Convert RGB color to HSV and apply color enhancements. (Hard code saturation and brightness boost for now)
         Args:
             img: Input image as numpy array (height, width, channels)
 
         Returns:
-            List of num_colors enhanced color palette
+            List of num_colors enhanced color palette in HSV
         """
-        pass
+        if self.config.debug_mode:
+            print("Computing HSV colors and applying color saturation")
+        # Convert RGB colors to HSV
+        normalized_rgb = rgb_colors.astype(float) / 255.0
+        hsv_colors = np.array(
+            [colorsys.rgb_to_hsv(r, g, b) for r, g, b in normalized_rgb]
+        )
+        # Apply saturation Snew = (S)^.75 + .05
+        hsv_colors[:, 1] = np.power(hsv_colors[:, 1], 0.75) + 0.05
+        # Apply saturation Vnew = (V)^.75 + .05
+        hsv_colors[:, 2] = np.power(hsv_colors[:, 2], 0.75) + 0.05
+        return hsv_colors
 
     def _compute_complementary_colors(
         self, primary_colors: List[np.ndarray]
