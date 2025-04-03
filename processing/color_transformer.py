@@ -28,9 +28,11 @@ class ColorTransformer:
 
         if self.config.debug_mode:
             print("creating dot clusters")
-        # Create dot clusters using list comprehension
+
+        # TODO: get Intensity map from inverse grayscale map and add it to list comprehnsion
+        I = 1.8
         dot_clusters = [
-            DotCluster((x, y), pixel, color)
+            DotCluster((x, y), pixel, color, self.config.intensity_alpha, I)
             for (x, y), pixel, color in zip(coordinates, pixels, selected_colors)
         ]
         if self.config.debug_mode:

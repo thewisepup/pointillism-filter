@@ -4,10 +4,12 @@ import numpy as np
 class DotCluster:
 
     # TODO: pass in configs that will be used to generate weights and counts
-    def __init__(self, position, pixel_color, selected_colors):
+    def __init__(self, position, pixel_color, selected_colors, alpha, I):
         self.position = position
         self.pixel_color = pixel_color
         self.selected_colors = selected_colors
+        self.alpha = alpha
+        self.intensity = I
         self.color_weights = self._compute_color_weights()
         self.dot_counts = self._compute_color_dot_counts()
 
