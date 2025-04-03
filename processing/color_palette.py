@@ -18,12 +18,20 @@ class ColorPalette:
             img: Input image as numpy array (height, width, channels)
 
         Returns:
-            List of 16 colors
+            List of 16 colors (8 primary + 8 complementary)
         """
         if self.config.debug_mode:
             print("--Generating Color Palette--")
         primary_colors = self._compute_primary_colors(img)
         enhanced_hsv_primary_colors = self._enhance_color_palette(primary_colors)
+        complementary_colors = self._compute_complementary_colors(
+            enhanced_hsv_primary_colors
+        )
+
+        if self.config.debug_mode:
+            print("--Finished Generating Color Palette--")
+        # Combine primary and complementary colors into a single list
+        return np.vstack((enhanced_hsv_primary_colors, complementary_colors))
 
     def _compute_primary_colors(self, img: np.ndarray) -> np.ndarray:
         """Apply k-means clustering to extract num_colors primary colors
@@ -67,14 +75,25 @@ class ColorPalette:
         return hsv_colors
 
     def _compute_complementary_colors(
-        self, primary_colors: List[np.ndarray]
-    ) -> List[np.ndarray]:
-        """
-        Generate a list of 8 complementary colors given a list of 8 primary_colors
+        self, primary_hsv_colors: np.ndarray
+    ) -> np.ndarray:
+        """Generate a list of 8 complementary colors given a list of 8 primary_colors
         Args:
             primary_colors: List of 8 HSV primary colors
 
         Returns:
             List of 8 complementary_colors
         """
-        pass
+        if self.config.debug_mode:
+            print("Computing complementary colors")
+
+        complementary_colors = primary_hsv_colors.copy()
+        # Generate random shifts between 0 and 180 degrees
+        random_shifts = np.random.uniform(0, 180, size=len(primary_hsv_colors))
+        # Shift the hue values by the random amounts
+        # Hue values in HSV are in range [0, 1], so we divide by 360
+        complementary_colors[:, 0] = (
+            complementary_colors[:, 0] + random_shifts / 360.0
+        ) % 1.0
+
+        return complementary_colors

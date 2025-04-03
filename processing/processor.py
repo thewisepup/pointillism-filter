@@ -33,7 +33,7 @@ class Processor:
 
         self._validate_image_input(image)
         preprocessed_image = self.preprocessor.preprocess_image(image)
-
+        self._validate_image_input(preprocessed_image)
         if self.config.debug_mode:
             debug_image = Image.fromarray(preprocessed_image, "RGB")
             debug_image.save("images/output/preprocessed_image.jpg")
@@ -41,6 +41,7 @@ class Processor:
         color_palette = self.color_palette.compute_pointillism_color_palette(
             preprocessed_image
         )
+        assert len(color_palette) == 16
 
     def _validate_image_input(self, image: np.ndarray):
         """Validates the input image array meets the required specifications.
