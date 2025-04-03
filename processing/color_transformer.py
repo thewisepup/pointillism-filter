@@ -35,6 +35,8 @@ class ColorTransformer:
             DotCluster((x, y), pixel, color, self.config.intensity_alpha, I)
             for (x, y), pixel, color in zip(coordinates, pixels, selected_colors)
         ]
+        for cluster in dot_clusters:
+            print(cluster)
         if self.config.debug_mode:
             print("--Finished transforming image to dot clusters--")
         return dot_clusters
