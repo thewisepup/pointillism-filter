@@ -44,7 +44,7 @@ class Processor:
             preprocessed_image
         )
         assert len(color_palette) == 16
-
+        self.visualize_color_palette(color_palette)
         self.color_transformer.transform(preprocessed_image, color_palette)
 
     def _validate_image_input(self, image: np.ndarray):
@@ -68,3 +68,37 @@ class Processor:
             raise ValueError("Input image must have data type np.uint8.")
         if np.any(image < 0) or np.any(image > 255):
             raise ValueError("Pixel values must be in the range [0, 255].")
+
+    def visualize_color_palette(
+        self,
+        color_palette: np.ndarray,
+        output_path: str = "images/output/color_palette.jpg",
+    ):
+        """Visualize the color palette as a grid of color swatches.
+
+        Args:
+            color_palette: Array of RGB colors of shape (16, 3)
+            output_path: Path to save the visualization
+        """
+        # Create a 4x4 grid of color swatches
+        swatch_size = 100  # Size of each color swatch in pixels
+        grid_size = 4  # 4x4 grid for 16 colors
+        image_size = swatch_size * grid_size
+
+        # Create a blank image
+        visualization = np.zeros((image_size, image_size, 3), dtype=np.uint8)
+
+        # Fill in each swatch with its corresponding color
+        for i in range(grid_size):
+            for j in range(grid_size):
+                idx = i * grid_size + j
+                if idx < len(color_palette):
+                    color = color_palette[idx]
+                    y_start = i * swatch_size
+                    y_end = (i + 1) * swatch_size
+                    x_start = j * swatch_size
+                    x_end = (j + 1) * swatch_size
+                    visualization[y_start:y_end, x_start:x_end] = color
+
+        # Convert to PIL Image and save
+        Image.fromarray(visualization, "RGB").save(output_path)

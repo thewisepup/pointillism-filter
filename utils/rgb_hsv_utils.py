@@ -24,6 +24,30 @@ def rgb_to_hsv(rgb: np.ndarray) -> np.ndarray:
 
     return np.array([h / 360, s, v])
 
+def hsv_to_rgb(hsv: np.ndarray) -> np.ndarray:
+    """Convert HSV color to RGB color space."""
+    h, s, v = hsv
+    h = h * 360  # Scale hue back to 0-360 range
+
+    c = v * s
+    x = c * (1 - abs((h / 60) % 2 - 1))
+    m = v - c
+
+    if 0 <= h < 60:
+        r, g, b = c, x, 0
+    elif 60 <= h < 120:
+        r, g, b = x, c, 0
+    elif 120 <= h < 180:
+        r, g, b = 0, c, x
+    elif 180 <= h < 240:
+        r, g, b = 0, x, c
+    elif 240 <= h < 300:
+        r, g, b = x, 0, c
+    else:
+        r, g, b = c, 0, x
+
+    rgb = np.array([r + m, g + m, b + m])
+    return (rgb * 255).astype(np.uint8)
 
 def hsv_distance(hsv1: np.ndarray, hsv2: np.ndarray) -> float:
     """Calculate distance between two HSV colors."""
@@ -40,3 +64,4 @@ def hsv_distance(hsv1: np.ndarray, hsv2: np.ndarray) -> float:
 
     # TODO double check if we want this: Weighted distance (giving more importance to hue)
     return np.sqrt(2 * h_diff**2 + s_diff**2 + v_diff**2)
+

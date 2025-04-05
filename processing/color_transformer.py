@@ -128,3 +128,10 @@ class ColorTransformer:
 
         # Combine closest colors and random color
         return closest_colors + [random_color]
+
+
+"""
+TODO: color pallete needs to return RGB not HSV
+TOOD: _select_dot_cluster_colors needs to return RGB colors
+TODO: dot clusters need to use rgb values
+"""
