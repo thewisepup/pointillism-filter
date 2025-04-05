@@ -1,3 +1,4 @@
+import random
 from typing import List
 import numpy as np
 from configs.config import PointillismConfig
@@ -22,18 +23,21 @@ class ImageGenerator:
             (int(scaled_height), int(scaled_width), 3), 255, dtype=np.uint8
         )
         print(canvas.shape)
+        for cluster in dot_clusters:
+            self._draw_cluster(canvas, cluster)
         if self.config.debug_mode:
             debug_image = Image.fromarray(canvas, "RGB")
             debug_image.save("images/output/canvas.jpg")
-        pass
-        # for cluster in dot_clusters:
-        #     self._draw_cluster(canvas, cluster)
-        # return image
 
-    def _draw_cluster(self, canvas, cluster):
-        # Implementation of drawing a dot cluster on the canvas
-        # Use cluster.position, cluster.selected_colors, and cluster.dot_counts
-        pass
+        print(canvas)
+        return canvas
+
+    def _draw_cluster(self, canvas: np.ndarray, cluster: DotCluster):
+        center_x = int(cluster.position[0] * self.config.cluster_distance)
+        center_y = int(cluster.position[1] * self.config.cluster_distance)
+
+        # Fill the cluster area with black
+        canvas[center_y, center_x] = [0, 0, 0]
 
     def _validate_cluster_and_image(
         self, dot_clusters: List[DotCluster], preprocessed_image: np.ndarray

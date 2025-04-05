@@ -6,7 +6,7 @@ class PointillismConfig:
     # Preprocessing parameters
     kernel_size: int = 15
     downsample_factor: float = 0.5
-    cluster_distance: int = 10
+    cluster_distance: int = 6
     intensity_alpha: int = 100
     gamma_distortion: float = 1.8
     # Debug mode
