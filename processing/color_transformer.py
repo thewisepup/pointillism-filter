@@ -9,6 +9,19 @@ class ColorTransformer:
         self.config = config or PointillismConfig()
 
     def transform(self, img: np.ndarray, color_palette: np.ndarray):
+        """Transform an input image into a collection of dot clusters using a specified color palette.
+
+        Args:
+            img (np.ndarray): Input RGB image of shape (height, width, 3)
+            color_palette (np.ndarray): Array of RGB colors to use for the dot clusters, shape (n, 3)
+
+        Returns:
+            list[DotCluster]: List of dot clusters, where each cluster contains:
+                - Position (x, y) coordinates
+                - Original pixel color
+                - Selected colors from palette
+                - Intensity value based on inverted grayscale
+        """
         if self.config.debug_mode:
             print("--Transforming image to dot clusters--")
 
@@ -44,6 +57,25 @@ class ColorTransformer:
         return dot_clusters
 
     def _convert_image_to_inversed_grayscale(self, img: np.ndarray):
+        """Convert an RGB image to an inverted grayscale intensity map with gamma correction.
+
+        This method creates an intensity map that will be used to determine dot sizes in the
+        pointillism effect. Darker areas in the original image will result in larger dots,
+        while lighter areas will result in smaller dots.
+
+        The process involves:
+        1. Converting the image to grayscale by taking the mean of RGB channels
+        2. Inverting the grayscale values (255 - grayscale)
+        3. Normalizing values to [0,1] range
+        4. Applying gamma correction using the configured gamma_distortion value
+        5. Converting back to [0,255] range as uint8
+
+        Args:
+            img (np.ndarray): Input RGB image of shape (height, width, 3)
+
+        Returns:
+            np.ndarray: Inverted grayscale intensity map of shape (height, width) with values in [0,255]
+        """
         # Convert to grayscale and invert
         grayscale = 255 - np.mean(img, axis=2)
         # Normalize to [0,1] range
@@ -52,10 +84,26 @@ class ColorTransformer:
         gamma_corrected = np.power(normalized, self.config.gamma_distortion)
         # Convert back to [0,255] range and uint8
         inversed_grayscale_image = (gamma_corrected * 255).astype(np.uint8)
-
         return inversed_grayscale_image
 
     def _select_dot_cluster_colors(self, pixel: np.ndarray, color_palette: np.ndarray):
+        """Select colors for a dot cluster based on the input pixel and color palette.
+
+        This method selects three colors for each dot cluster:
+        1. The two closest colors from the palette to the input pixel
+        2. One random color from the remaining colors in the palette
+
+        The color selection is based on HSV color space distance to ensure
+        perceptually meaningful color matches.
+
+        Args:
+            pixel (np.ndarray): Input RGB pixel of shape (3,)
+            color_palette (np.ndarray): Array of RGB colors to choose from, shape (n, 3)
+
+        Returns:
+            list: List of three RGB colors, where the first two are the closest matches
+                  and the third is a random color from the remaining palette
+        """
         # Convert RGB pixel to HSV
         pixel_hsv = self._rgb_to_hsv(pixel)
 
