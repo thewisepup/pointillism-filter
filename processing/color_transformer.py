@@ -94,7 +94,7 @@ class ColorTransformer:
         1. The two closest colors from the palette to the input pixel
         2. One random color from the remaining colors in the palette
 
-        The color selection is based on HSV color space distance to ensure
+        The color selection is based on RGB color space distance to ensure
         perceptually meaningful color matches.
 
         Args:
@@ -105,33 +105,23 @@ class ColorTransformer:
             list: List of three RGB colors, where the first two are the closest matches
                   and the third is a random color from the remaining palette
         """
-        # Convert RGB pixel to HSV
-        pixel_hsv = rgb_to_hsv(pixel)
-
-        # Calculate distances between pixel and all colors in palette
-        distances = np.array(
-            [hsv_distance(pixel_hsv, color) for color in color_palette]
-        )
-
-        # Get indices of 2 closest colors
+        # Calculate Euclidean distance between pixel and all colors in palette
+        distances = np.sqrt(np.sum((color_palette - pixel) ** 2, axis=1))
+        # Get indices of two closest colors
         closest_indices = np.argsort(distances)[:2]
-        closest_colors = color_palette[closest_indices].tolist()
+        closest_colors = color_palette[closest_indices]
 
-        # Get remaining colors (excluding the 2 closest)
+        # Get remaining colors (excluding the two closest)
         remaining_indices = np.setdiff1d(np.arange(len(color_palette)), closest_indices)
         remaining_colors = color_palette[remaining_indices]
 
-        # Select 1 random color from remaining colors
-        random_color = remaining_colors[
-            np.random.randint(len(remaining_colors))
-        ].tolist()
+        random_color = remaining_colors[np.random.randint(0, len(remaining_colors))]
 
-        # Combine closest colors and random color
-        return closest_colors + [random_color]
+        # Combine all three colors
+        return [closest_colors[0], closest_colors[1], random_color]
 
 
 """
-TODO: color pallete needs to return RGB not HSV
 TOOD: _select_dot_cluster_colors needs to return RGB colors
 TODO: dot clusters need to use rgb values
 """

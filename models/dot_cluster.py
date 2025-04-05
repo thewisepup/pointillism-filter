@@ -26,7 +26,6 @@ class DotCluster:
         Returns:
             np.ndarray: A flattened array of weights for each selected color
         """
-        # TODO: convert HSV to RGB, lhs is using HSV values in equation
         # TODO: double check math
 
         C = np.array(self.selected_colors)
