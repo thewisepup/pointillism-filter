@@ -1,3 +1,4 @@
+from typing import List
 import numpy as np
 from configs.config import PointillismConfig
 from models.dot_cluster import DotCluster
@@ -9,7 +10,7 @@ class ColorTransformer:
     def __init__(self, config: PointillismConfig = None):
         self.config = config or PointillismConfig()
 
-    def transform(self, img: np.ndarray, color_palette: np.ndarray):
+    def transform(self, img: np.ndarray, color_palette: np.ndarray) -> List[DotCluster]:
         """Transform an input image into a collection of dot clusters using a specified color palette.
 
         Args:
@@ -51,8 +52,7 @@ class ColorTransformer:
                 coordinates, pixels, selected_colors, inversed_grayscale_image
             )
         ]
-        # for cluster in dot_clusters:
-        #     print(cluster)
+
         if self.config.debug_mode:
             print("--Finished transforming image to dot clusters--")
         return dot_clusters

@@ -42,12 +42,12 @@ class DotCluster:
         """
         Compute the weights (Q) for each selected color to use for the pixel dot cluster.
         Solves the equation Q = C^-1 · P where:
-        - C is a 3x3 matrix containing the RGB values of the three selected colors (normalized to 0-1)
-        - P is a 3x1 matrix containing the RGB values of the original pixel (normalized to 0-1)
+        - C is a 3x3 matrix containing the RGB values of the three selected colors
+        - P is a 3x1 matrix containing the RGB values of the original pixel
         - Q is a 3x1 matrix of weights for each selected color
 
         Returns:
-            np.ndarray: A flattened array of weights for each selected color
+            np.ndarray: A 3x1 array of weights for each selected color
         """
         # TODO: Some values return negative values or grater than 1. Trust that the math is right
         C = np.array(self.selected_colors)
@@ -56,16 +56,12 @@ class DotCluster:
         Q = C_inv @ P
         return Q
 
-    def _compute_color_dot_counts(self):
+    def _compute_color_dot_counts(self) -> np.ndarray:
         """
-        Compute the weights for each selected_color to use for the pixel dot cluster
-
-        Args:
-            pixel_rgb: rgb value of input pixel to generate dot cluster for
-            selected_colors: list of (3) colors to generate dot cluster
+        Compute the number of dots for each selected color based on the color weights and intensity.
 
         Returns:
-            weights: np.ndarray shape(3,)
+            np.ndarray: A 3x1 array containing the number of dots for each selected color
         """
         rhs = (self.alpha * self.intensity) / np.sum(self.color_weights)
         dot_counts = self.color_weights @ rhs

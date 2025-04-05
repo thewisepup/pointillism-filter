@@ -18,7 +18,7 @@ def main():
     forest = "images/forest.jpeg"
     group = "images/group.JPG"
 
-    image = Image.open(beach)
+    image = Image.open(brandon)
     print("Original pillow size:", image.size)
 
     numpy_array = np.array(image)
