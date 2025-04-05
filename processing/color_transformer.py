@@ -29,17 +29,31 @@ class ColorTransformer:
         if self.config.debug_mode:
             print("creating dot clusters")
 
-        # TODO: get Intensity map from inverse grayscale map and add it to list comprehnsion
-        I = 1.8
+        inversed_grayscale_image = self._convert_image_to_inversed_grayscale(img)
+        inversed_grayscale_image = inversed_grayscale_image.reshape(-1, 1)
         dot_clusters = [
-            DotCluster((x, y), pixel, color, self.config.intensity_alpha, I)
-            for (x, y), pixel, color in zip(coordinates, pixels, selected_colors)
+            DotCluster((x, y), pixel, color, self.config.intensity_alpha, intensity)
+            for (x, y), pixel, color, intensity in zip(
+                coordinates, pixels, selected_colors, inversed_grayscale_image
+            )
         ]
-        for cluster in dot_clusters:
-            print(cluster)
+        # for cluster in dot_clusters:
+        #     print(cluster)
         if self.config.debug_mode:
             print("--Finished transforming image to dot clusters--")
         return dot_clusters
+
+    def _convert_image_to_inversed_grayscale(self, img: np.ndarray):
+        # Convert to grayscale and invert
+        grayscale = 255 - np.mean(img, axis=2)
+        # Normalize to [0,1] range
+        normalized = grayscale / 255.0
+        # Apply gamma correction
+        gamma_corrected = np.power(normalized, self.config.gamma_distortion)
+        # Convert back to [0,255] range and uint8
+        inversed_grayscale_image = (gamma_corrected * 255).astype(np.uint8)
+
+        return inversed_grayscale_image
 
     def _select_dot_cluster_colors(self, pixel: np.ndarray, color_palette: np.ndarray):
         # Convert RGB pixel to HSV
@@ -102,5 +116,5 @@ class ColorTransformer:
         s_diff = hsv1[1] - hsv2[1]
         v_diff = hsv1[2] - hsv2[2]
 
-        # WARN double check if we want this: Weighted distance (giving more importance to hue)
+        # TODO double check if we want this: Weighted distance (giving more importance to hue)
         return np.sqrt(2 * h_diff**2 + s_diff**2 + v_diff**2)

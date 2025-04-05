@@ -8,6 +8,6 @@ class PointillismConfig:
     downsample_factor: float = 0.5
     cluster_distance: int = 10
     intensity_alpha: int = 100
-
+    gamma_distortion: float = 1.8
     # Debug mode
     debug_mode: bool = False

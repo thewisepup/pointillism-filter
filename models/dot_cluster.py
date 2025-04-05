@@ -27,8 +27,8 @@ class DotCluster:
         Returns:
             weights: np.ndarray shape(3,)
         """
-        # TODO: convert HSV to RGB
-        # TODO: implement equations to compute color weights
+        # TODO: convert HSV to RGB, lhs is using HSV values in equation
+        # TODO: double check math
         lhs = np.linalg.pinv(np.array(self.selected_colors))
         rhs = self.pixel_color.T
         return lhs * rhs
