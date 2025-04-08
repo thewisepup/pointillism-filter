@@ -66,3 +66,5 @@ class DotCluster:
         rhs = (self.alpha * self.intensity) / np.sum(self.color_weights)
         dot_counts = self.color_weights @ rhs
         return dot_counts
+
+    
